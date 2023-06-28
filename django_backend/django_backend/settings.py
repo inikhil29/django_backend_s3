@@ -86,11 +86,19 @@ WSGI_APPLICATION = 'django_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'djongo',
+        'NAME': 'my-file-db',
     }
 }
 
+MONGODB_DATABASES = {
+    'default': {
+        'NAME': 'my-test-db',
+        'HOST': 'localhost',
+        'PORT': 27017,
+        'CONNECT': False,
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -146,7 +154,7 @@ AWS_S3_FILE_OVERWRITE = False
 
 CORS_ALLOW_ALL_ORIGINS = True 
 APPEND_SLASH = False
-PREPEND_WWW = True
+PREPEND_WWW = False
 ALLOWED_HOSTS = ['*']
 
 LOGGING = {

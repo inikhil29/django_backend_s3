@@ -2,17 +2,19 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import MyModelSerializer
+from rest_framework.renderers import JSONRenderer
+from .serializers import UploadFileSerializer
+from .models import FileUploadModel
+from rest_framework import generics
 # Create your views here.
-
-def upload_file(request):
-    return HttpResponse('Test Hello')
-
-
 class FileUploadView(APIView):
     def post(self, request, format=None):
-        serializer = MyModelSerializer(data=request.data)
+        serializer = UploadFileSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({'message': 'File uploaded successfully.'})
+            file_data = serializer.save()
+            return Response({'message': 'File uploaded successfully.', 'success': True})
         return Response(serializer.errors, status=400)
+    
+class FileListAPIView(generics.ListAPIView):
+    queryset = FileUploadModel.objects.all()
+    serializer_class = UploadFileSerializer
