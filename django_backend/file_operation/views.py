@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from .serializers import UploadFileSerializer
-from .models import FileUploadModel
+from .serializers import UploadFileSerializer, UploadedFileDetailsSerializer
+from .models import FileUploadModel, UploadedFileDetailsModel
 from rest_framework import generics
 # Create your views here.
 class FileUploadView(APIView):
@@ -12,9 +12,14 @@ class FileUploadView(APIView):
         serializer = UploadFileSerializer(data=request.data)
         if serializer.is_valid():
             file_data = serializer.save()
-            return Response({'message': 'File uploaded successfully.', 'success': True})
-        return Response(serializer.errors, status=400)
+            return Response({'message': 'File uploaded successfully.', 'success': True}, status=200)
+        return Response({'error': serializer.errors, 'success': False}, status=400)
     
 class FileListAPIView(generics.ListAPIView):
-    queryset = FileUploadModel.objects.all()
-    serializer_class = UploadFileSerializer
+    queryset = UploadedFileDetailsModel.objects.all()
+    serializer_class = UploadedFileDetailsSerializer
+    print('-------------------------->')
+    print(queryset)
+    print('-------------------------->')
+    print(serializer_class)
+    print('-------------------------->')
