@@ -10,6 +10,7 @@ class FileUploadModel(models.Model):
 
 class UploadedFileDetailsModel(models.Model):
     id = models.AutoField(primary_key=True)
-    upload_file_id = models.ForeignKey(FileUploadModel, on_delete=models.CASCADE)
+    upload_file = models.ForeignKey(FileUploadModel, on_delete=models.CASCADE)
     file_path = models.CharField(max_length=255)
     creation_timestamp = models.DateTimeField(default=timezone.now)
+    delete_flag = models.SmallIntegerField(choices=[(0, 'Not Deleted'), (1, 'Deleted')], default=0)
