@@ -1,6 +1,6 @@
 import boto3
 from django.conf import settings
-from botocore.exceptions import NoCredentialsError
+from botocore.exceptions import NoCredentialsError, ConnectionError, ConnectTimeoutError, ClientError
 from django.core.files.storage import default_storage
 
 
@@ -21,6 +21,8 @@ class S3Connection():
             return True 
         except NoCredentialsError:
             return False
+        except Exception as e:
+            return False
 
     def get_url_of_obj(self, obj_name, bucket_name=''):
         try:
@@ -30,10 +32,10 @@ class S3Connection():
             url = self.s3_client.generate_presigned_url('get_object',
                                                         Params={'Bucket': bucket_name, 'Key': obj_name},
                                                         ExpiresIn=3600)
-            if url:
-                return url
-            return False
+            return url if url else False
         except NoCredentialsError:
+            return False
+        except Exception as e:
             return False
         
 
@@ -46,6 +48,8 @@ class S3Connection():
             return s3_base_url
         except NoCredentialsError:
             return False
+        except Exception as e:
+            return False
         
     def get_s3_bucket_location(self, bucket_name):
         try:
@@ -54,4 +58,30 @@ class S3Connection():
             bucket_location = response['LocationConstraint']
             return bucket_location if bucket_location else False
         except NoCredentialsError:
+            return False
+        except Exception as e:
+            return False
+        
+    def delete_object(self, obj_name, bucket_name = ''):
+        try:
+            bucket_name = self.bucket_name_default if bucket_name == '' else bucket_name
+            if(self.check_object_exist(obj_name=obj_name)):
+                response = self.s3_client.delete_object(Bucket=bucket_name, Key=obj_name)
+            return True
+        except NoCredentialsError:
+            return False
+        except Exception as e:
+            return False
+    def check_object_exist(self, obj_name, bucket_name=''):
+        try:
+            bucket_name = self.bucket_name_default if bucket_name == '' else bucket_name
+            response = self.s3_client.head_object(Bucket=bucket_name, Key=obj_name)
+            return True
+        except ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                # Object does not exist
+                return False
+            else:
+                return False
+        except Exception as e:
             return False

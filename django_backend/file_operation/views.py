@@ -6,6 +6,7 @@ from rest_framework.renderers import JSONRenderer
 from .serializers import UploadFileSerializer, UploadedFileDetailsSerializer, GetUploadedFileDetailsSerializer, GetFileDetailsSerializer
 from .models import FileUploadModel, UploadedFileDetailsModel
 from rest_framework import generics
+from services.s3_connection import S3Connection
 # Create your views here.
 
 #View for File Uplaod
@@ -26,7 +27,7 @@ class FileUploadView(APIView):
     
 #View for get the uploaded file list
 class FileListAPIView(generics.ListAPIView):
-    queryset = UploadedFileDetailsModel.objects.select_related('upload_file')
+    queryset = UploadedFileDetailsModel.objects.select_related('upload_file').filter(delete_flag=0)
     serializer_class = GetUploadedFileDetailsSerializer
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -39,7 +40,27 @@ class FileListAPIView(generics.ListAPIView):
         return Response(data, status=status_code)
 
 #view for get a file details
-class GetFileDetails(generics.RetrieveAPIView):
-    queryset = UploadedFileDetailsModel.objects.select_related('upload_file')
+class GetFileDetailsAPIView(generics.RetrieveAPIView):
+    queryset = UploadedFileDetailsModel.objects.select_related('upload_file').filter(delete_flag=0)
     serializer_class = GetFileDetailsSerializer
 
+
+class DeleteFileAPIView(APIView):
+    def post(self, request, format=None):
+
+        try:
+            key = request.data.get('key')
+            obj = UploadedFileDetailsModel.objects.get(pk=key, delete_flag=0)
+            s3Client = S3Connection()
+            result = s3Client.delete_object(obj_name=obj.file_path)
+            if result:
+                obj.delete_flag = 1
+                obj.save()
+                return Response({'message': 'File Deleted Sucessfully!', 'success': True}, status=200)
+            else:
+                return Response({'error':'Something went wrong', 'success': False}, status=400)
+
+        except UploadedFileDetailsModel.DoesNotExist:
+            return Response({'error': 'File not found.', 'success':False}, status=404)
+        except Exception as e:
+             return Response({'error': str(e), 'success':False}, status=500)

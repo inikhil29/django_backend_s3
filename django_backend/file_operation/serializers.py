@@ -15,7 +15,7 @@ class GetUploadedFileDetailsSerializer(serializers.ModelSerializer):
 
     class Meta: 
         model = UploadedFileDetailsModel
-        fields = '__all__'
+        fields = ['id', 'upload_file', 'creation_timestamp']
 
 class UploadedFileDetailsSerializer(serializers.ModelSerializer):
     class Meta: 
@@ -65,5 +65,8 @@ class GetFileDetailsSerializer(serializers.ModelSerializer):
         
     def get_file_url(self, obj):
         s3Client = S3Connection()
-        url = s3Client.get_url_of_obj(obj_name=obj.file_path)
-        return url if url != False else ''
+        if s3Client.check_object_exist(obj_name=obj.file_path):
+            url = s3Client.get_url_of_obj(obj_name=obj.file_path)
+            return url if url else ''
+        else:
+            return ''
