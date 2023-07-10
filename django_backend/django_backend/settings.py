@@ -88,17 +88,24 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'my-file-db',
+        'CLIENT': {
+            'host': 'backend_db',
+            'port': 27017,
+        },
     }
 }
+#Change for local Testing
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'NAME': 'my-file-db',
+#         'CLIENT': {
+#             'host': 'localhost',
+#             'port': 4200,
+#         },
+#     }
+# }
 
-MONGODB_DATABASES = {
-    'default': {
-        'NAME': 'my-test-db',
-        'HOST': 'localhost',
-        'PORT': 27017,
-        'CONNECT': False,
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
