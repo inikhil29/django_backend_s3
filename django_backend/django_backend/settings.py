@@ -84,21 +84,18 @@ WSGI_APPLICATION = 'django_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'NAME': 'my-file-db',
+        'CLIENT': {
+            'host': 'backend_db',
+            'port': 27017,
+        },
     }
 }
 
-MONGODB_DATABASES = {
-    'default': {
-        'NAME': 'my-test-db',
-        'HOST': 'localhost',
-        'PORT': 27017,
-        'CONNECT': False,
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
