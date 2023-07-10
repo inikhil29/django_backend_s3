@@ -156,17 +156,3 @@ CORS_ALLOW_ALL_ORIGINS = True
 APPEND_SLASH = False
 PREPEND_WWW = False
 ALLOWED_HOSTS = ['*']
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'DEBUG',
-    },
-}
