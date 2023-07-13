@@ -12,6 +12,7 @@ services:
       - ./django_backend:/app
     depends_on:
       - backend_db
+      - redis_cache
   backend_db:
     restart: always
     container_name: mongo_backend_db
@@ -22,3 +23,9 @@ services:
       - ./mongodb:/data/db
     ports:
       - 4200:27017
+  redis_cache:
+    restart: always
+    container_name: redis_backend
+    image: redis:latest
+    ports:
+      - 4300:6379
