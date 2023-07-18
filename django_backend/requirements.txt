@@ -99,7 +99,6 @@ scour==0.38.2
 scprep==1.2.3
 SecretStorage==3.3.1
 six==1.16.0
-sklearn==0.0.post5
 soupsieve==2.3.1
 sqlparse==0.2.4
 ssh-import-id==5.11
