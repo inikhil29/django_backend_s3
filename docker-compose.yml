@@ -22,10 +22,10 @@ services:
     volumes:
       - ./mongodb:/data/db
     ports:
-      - 4200:27017
+      - 27017:27017
   redis_cache:
     restart: always
     container_name: redis_backend
     image: redis:latest
     ports:
-      - 4300:6379
+      - 6379:6379
